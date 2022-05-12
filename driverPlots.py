@@ -1,11 +1,12 @@
 import json
-import xml.etree.ElementTree as ET
 import requests as req
 import requests_cache as cache
 import numpy as np
 from matplotlib import pyplot as plt
 import matplotlib.gridspec as gridspec
+from matplotlib import colors 
 from .driver import *
+from .constants import *
 
 
 
@@ -13,12 +14,13 @@ def head_to_head_laptime(driverIDs, season, round_number, startLap = 0, endLap =
 	"""
 	If laps is provided, uses a rolling lap average over that many laps
 	"""
+	#Create plot 
 	fig = plt.figure()
 	gs = gridspec.GridSpec(2, 1, height_ratios=[3,1])
 	laptimes = plt.subplot(gs[0])
 	delta = plt.subplot(gs[1])
 
-
+	#If laps is greater than 0, use a rolling average. Otherwise just compare raw laptimes
 	if laps > 0:
 		deltaTimes = rolling_laptimes(driverIDs[0], season, round_number, startLap = startLap, endLap = endLap, laps = laps)
 	else:
@@ -27,13 +29,13 @@ def head_to_head_laptime(driverIDs, season, round_number, startLap = 0, endLap =
 	for driver in driverIDs:
 		if laps > 0:
 			driverLaps = rolling_laptimes(driver, season, round_number, startLap = startLap, endLap = endLap, laps = laps)
-			x = np.arange(1+startLap, len(driverLaps)+1)
 		else:
 			driverLaps = APIRequests.get_laps(season, round_number, driver)[startLap:endLap]
-			x = np.arange(1+startLap, len(driverLaps))
 
-		if driver not in driverColors.keys():
-			color = (np.random.beta(6,2,size=(1,1,3))*255).astype("uint8")
+		x = np.arange(1+startLap, len(driverLaps)+1)
+		
+		if driver not in driverColors.keys(): #Give a random color
+			color = colors.hsv_to_rgb((np.random.randint(0, 256)/256, 1, 1))
 		else:
 			color = driverColors[driver]
 

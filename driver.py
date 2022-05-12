@@ -4,20 +4,11 @@ import requests as req
 import requests_cache as cache
 import numpy as np
 
-lap_limit = "?limit=87" #dont think there are more than this 
-lapLimit = 87 #sakhir grand prix has most laps
-cache.install_cache()
+from . import APIRequests
+from . import constants
 
-driverColors = {
-	"max_verstappen":"darkorange",
-	"leclerc":"red",
-	"perez":"blue",
-	"sainz":"gold",
-	"hamilton":"darkorchid",
-	"russell":"aqua",
-	"ricciardo":"hotpink",
-	"norris":"yellow"
-}
+
+cache.install_cache()
 
 
 
@@ -28,6 +19,7 @@ class Driver:
 		self.driverID = name
 		driverGET = req.get("https://ergast.com/api/f1/drivers/{}.json".format(name))
 		driverJSON = json.loads(driverGET.content)
+
 		if len(driverJSON["MRData"]["DriverTable"]["Drivers"]) == 0:
 			raise UnknownDriver("No such driver \"{}\" exists.".format(name))
 
@@ -36,8 +28,11 @@ class Driver:
 		self.lapsRace = {} 				#Keys are [season][round]
 		self.raceResults = {} 			#raceResults[season][round] gives result
 
-	def get_race_participation(self):
-		#returns list with year/round participated
+	def get_race_results(self):
+		"""
+		Gets all races participated in by the driver.
+		
+		"""
 		limit = 30
 		offset = 0
 		raceResults = req.get("https://ergast.com/api/f1/drivers/{0}/results.json?offset={1}".format(self.driverID, offset))
@@ -53,14 +48,15 @@ class Driver:
 				self.raceID_participated[int(race["season"])].append(int(race["round"]))
 				result = int(race["Results"][0]["position"])
 				status = race["Results"][0]["status"]
-				if status not in  ["Finished","+1 Lap"]:	
+
+				if status not in finishStatus:	
 					result = -1
 				self.raceResults[int(race["season"])][int(race["round"])] = result
-				#self.lapsRace[int(race["season"])][int(race["laps"])] = []
 
 			offset += limit
 			raceResults = req.get("https://ergast.com/api/f1/drivers/{0}/results.json?offset={1}".format(self.driverID, offset))
 			raceResults = json.loads(raceResults.content)
+
 		return self.raceID_participated
 
 
@@ -135,44 +131,6 @@ class UnknownDriver(BaseException):
 		self.message = message
 	def __str__(self):
 		return self.message
-
-class APIRequests:
-
-	@classmethod
-	def get_laps(cls, season, round_number, driverID):
-		"""
-		Takes a season, round, and driverID and returns a list of their laptimes for that specific race.
-		"""
-		requestGET = req.get("https://ergast.com/api/f1/{0}/{1}/drivers/{2}/laps.json".format(season, round_number, driverID)+lap_limit)
-		lapTimes = json.loads(requestGET.content)
-		return lapTimes
-
-	@classmethod
-	def get_races(cls, seasonList):
-		#Takes as input a list of seasons(years) and gets all the races(# of rounds essentially)
-		#returns a tuple (seaason, round)
-		seasonRounds = []
-	
-		for season in seasonList:
-			seasonReq = req.get("http://ergast.com/api/f1/{0}.json".format(season))
-			seasonReq = json.loads(seasonReq.content)
-			for i in range(int(seasonReq["MRData"]["total"])):
-				seasonRounds.append(season, i)
-	
-		return seasonRounds
-	@classmethod
-	def get_drivers(cls, season, round_number):
-		driverIDList = []
-		
-		raceReq = req.get("https://ergast.com/api/f1/{0}/{1}/driverStandings.json".format(season,round_number))
-		raceJson = json.loads(raceReq.content)
-
-		for driverReq in raceJson["MRData"]["StandingsTable"]["StandingsLists"][0]["DriverStandings"]:
-			driverIDList.append(driverReq["Driver"]["driverId"])
-
-		return driverIDList
-
-
 
 #dataset.plot(kind='box', subplots=True, layout=(2,2), sharex=False, sharey=False)
 
@@ -507,34 +465,3 @@ def getPtsSystem(season, drivers, ptsSystem):
 			pts += ptsSystem[driver.raceResults[season][race]]
 	print(driver.driverID, season, pts)
 	return driverPts
-
-
-
-#ptsSystem = {1:25, 2:18, 3:15, 4:12, 5:10, 6:8, 7:6, 8:4, 9:2, 10:1, -1:0}
-#ptsSystem = {1:10, 2:8, 3:6, 4:5, 5:4, 6:3, 7:2, 8:1, -1:0}
-#ptsSystem = {1:10, 2:6, 3:4, 4:3, 5:2, 6:1, -1:0}
-
-
-"""
-One way to parse would be: limit = 100, increase offset by 100 if there are still more results(until offset+limit= the total key)
-<word>.json?limit=_number_&offset=_number
-Either that or set limit to total immediately since no f1 driver has more than 1k anyways
-
-Try catch in case invalid queries are made(for example someone missing a race or someone not even being in the seasonn requested)
-
-
-essentially rewrite fastf1 to include more drivers and stuff
-
-
-
-Races in a season: http://ergast.com/api/f1/2005.json (dont worry about limit, there are no 30 race season (:))
-
-Seasons participated: http://ergast.com/api/f1/drivers/michael_schumacher/driverStandings
-or http://ergast.com/api/f1/drivers/michael_schumacher/seasons.json
-Race results: http://ergast.com/api/f1/drivers/michael_schumacher/results?offset=60
-Race participated: http://ergast.com/api/f1/drivers/michael_schumacher/races
-Finishing status(finished, dsq, mechanical problems, etc..):http://ergast.com/api/f1/drivers/michael_schumacher/status
-Lap times: http://ergast.com/api/f1/2003/2/drivers/michael_schumacher/laps
-
-
-"""
