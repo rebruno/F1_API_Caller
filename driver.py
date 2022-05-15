@@ -7,10 +7,7 @@ import numpy as np
 from . import APIRequests
 from . import constants
 
-
 cache.install_cache()
-
-
 
 class Driver:
 	driverID = ""
@@ -132,8 +129,6 @@ class UnknownDriver(BaseException):
 	def __str__(self):
 		return self.message
 
-#dataset.plot(kind='box', subplots=True, layout=(2,2), sharex=False, sharey=False)
-
 def get_sec(times):
 	try:
 		m,s = times.split(":")
@@ -143,6 +138,8 @@ def get_sec(times):
 
 def get_lap_statistics(driverID, season, round_number, n, percent, startLap = None, endLap = None):
 	pass
+
+
 def head_to_head(driverTuple, season, round_number, n, percent, startLap = None, endLap = None):
 	d1 = driverTuple[0]
 	d2 = driverTuple[2]
@@ -251,25 +248,6 @@ def rolling_laptimes_chart(driverIDList, season, round_number, startLap = None, 
 	plt.plot(x, roll, color=driverColors[driverID])
 
 
-
-
-
-
-#driverID = [	("max_verstappen", "perez", "Redbull"), 
-#				("leclerc", "sainz", "Scuderia Ferrari"), 
-#				("russell", "hamilton", "M*rcedes"), 
-#				("alonso", "ocon", "Alphine")]
-#driverID = [
-#			("vettel", "webber", "Redbull"),
-#			("hamilton", "button", "McLel"),
-#			("alonso", "massa", "Scuderia Ferrari")]
-#season = 2010
-#avgPercentDef = {"Redbull":[], "McLel":[], "Scuderia Ferrari":[] }
-#
-#
-#fileName = "2010_RB_SF_MC_pace_top20laps.csv"
-#n=5 #number of laps
-
 def createQualifyingComparaison(season, driverID, rounds = None):
 
 	fileName = "1995_BENETTON_WILLIAMS_QUALIFYING.csv"
@@ -292,8 +270,7 @@ def createQualifyingComparaison(season, driverID, rounds = None):
 
 		for round_number in rounds:
 			raceName = json.loads(req.get("https://ergast.com/api/f1/{}/{}.json".format(season, round_number)).content)["MRData"]["RaceTable"]["Races"][0]["raceName"]
-			csvfile.write("Qualifying results at the 2010 {0}, round{1},".format(raceName, round_number))
-			print(round_number)
+			csvfile.write("Qualifying results at the {0}, round{1},".format(raceName, round_number))
 			avgQuali = []
 	
 			for team in driverID:
@@ -356,9 +333,6 @@ def createLapComparaisonCSV(season,n,driverID, rounds = None, percent = 1):
 	avgPercentDef = {}
 	for team in teams:
 		avgPercentDef[team] = []
-
-
-
 
 	if rounds == None:
 		maxRound = json.loads(req.get("https://ergast.com/api/f1/{}.json".format(season)).content)["MRData"]["total"]

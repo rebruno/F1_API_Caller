@@ -5,15 +5,22 @@ import requests_cache as cache
 import numpy as np
 from .constants import *
 
-
+def get_sec(times):
+	try:
+		m,s = times.split(":")
+	except ValueError:
+		return 0
+	return round(int(m)*60 + float(s), 4)
 
 def get_laps(season, round_number, driverID):
 	"""
 	Takes a season, round, and driverID and returns a list of their laptimes for that specific race.
 	"""
 	requestGET = req.get("https://ergast.com/api/f1/{0}/{1}/drivers/{2}/laps.json".format(season, round_number, driverID)+lap_limit)
-	lapTimes = json.loads(requestGET.content)
-	return lapTimes
+	lapTimesJSON = json.loads(requestGET.content)
+	#lapTimes = np.array([get_sec(lap["Timings"][0]["time"]) for lap in lapTimesJSON["MRData"]["RaceTable"]["Races"][0]["Laps"]])
+	#print(lapTimes)
+	return lapTimesJSON
 
 def get_races(seasonList):
 	#Takes as input a list of seasons(years) and gets all the races(# of rounds essentially)
@@ -36,3 +43,10 @@ def get_drivers(season, round_number):
 	for driverReq in raceJson["MRData"]["StandingsTable"]["StandingsLists"][0]["DriverStandings"]:
 		driverIDList.append(driverReq["Driver"]["driverId"])
 	return driverIDList
+
+
+
+def get_race_name(season, round_number):
+		raceNameGET = req.get("https://ergast.com/api/f1/{}/{}.json".format(season, round_number))
+		raceName = json.loads(raceNameGET.content)["MRData"]["RaceTable"]["Races"][0]["raceName"]
+		return raceName
