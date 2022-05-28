@@ -8,7 +8,7 @@ from . import constants
 from .methods import *
 
 
-def driver_lap_comparaison(driverIDList, season, round_number, n, percent = 1, startLap = None, endLap = None):
+def driver_lap_comparison(driverIDList, season, round_number, n, percent = 1, startLap = None, endLap = None):
 	"""
 	Takes a list of driverIDs and compares the lap averages to the first entry.
 	Season and round number determine which race is used.
@@ -35,7 +35,7 @@ def driver_lap_comparaison(driverIDList, season, round_number, n, percent = 1, s
 
 	return driverLapData, driverGaps
 
-def driver_quali_comparaison(driverIDList, season, round_number):
+def driver_quali_comparison(driverIDList, season, round_number):
 	"""
 	Takes a list of driverIDs and returns their qualifying times for each session(so in post 2006, there would be Q1, Q2, Q3).
 	Also returns the gap to the first driver in the provided list, and returns the difference for each qualifying run.
