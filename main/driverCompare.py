@@ -35,7 +35,28 @@ def driver_lap_comparaison(driverIDList, season, round_number, n, percent = 1, s
 
 	return driverLapData, driverGaps
 
-def driver_lap_comparaison(driverIDList, season, round_number):
+def driver_quali_comparaison(driverIDList, season, round_number):
+	"""
+	Takes a list of driverIDs and returns their qualifying times for each session(so in post 2006, there would be Q1, Q2, Q3).
+	Also returns the gap to the first driver in the provided list, and returns the difference for each qualifying run.
+	"""
+
+	driverQualiData = []
+	driverGaps = []
+
+	driver1Stats = APIRequests.get_quali(driverIDList[0], round_number, driverID)
+	driverQualiData.append(driver1Stats)
+
+	driverGaps.append((driverIDList[0], 0))
+
+	for driverID in driverIDList[1:]:
+		driverStats = APIRequests.get_quali(driverIDList[0], round_number, driverID)
+		driverQualiData.append(driverStats)
+
+		gapTo = driverStats - driver1Stats
+		driverGaps.append((driverID, gapTo))
+
+	return driverQualiData, driverGaps
 
 
 
