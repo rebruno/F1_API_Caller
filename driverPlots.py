@@ -12,10 +12,10 @@ from .APIRequests import *
 
 
 
-def head_to_head_laptime(driverIDs, season, round_number, startLap = 0, endLap = None, laps = 0, cutoff=None):
+def head_to_head_laptime(driverIDList, season, round_number, startLap = 0, endLap = None, laps = 0, cutoff=None):
 	"""
 	If laps is provided, uses a rolling lap average over that many laps. Otherwise it displays raw laptime.
-	To use this, just pass a list of driverIDs, a season & round_number.
+	To use this, just pass a list of driver IDs, a season & round_number.
 	You can also optionally pass a lap interval using startLap, endLap to focus on a certain stint.
 	"""
 	
@@ -31,11 +31,11 @@ def head_to_head_laptime(driverIDs, season, round_number, startLap = 0, endLap =
 	#deltaTimes is essentially the laptimes of the first driver in the provided ID list subtracted from the driver being compared
 	#Ideally the fastest driver/race winner would be passed first so that the results do not look weird
 	if laps > 0:
-		deltaTimes = rolling_laptimes(driverIDs[0], season, round_number, startLap = startLap, endLap = endLap, laps = laps)
+		deltaTimes = rolling_laptimes(driverIDList[0], season, round_number, startLap = startLap, endLap = endLap, laps = laps)
 	else:
-		deltaTimes = get_laps(season, round_number, driverIDs[0])[startLap:endLap]
+		deltaTimes = get_laps(season, round_number, driverIDList[0])[startLap:endLap]
 
-	for driver in driverIDs:
+	for driver in driverIDList:
 		if laps > 0:
 			driverLaps = rolling_laptimes(driver, season, round_number, startLap = startLap, endLap = endLap, laps = laps)
 		else:
@@ -46,12 +46,8 @@ def head_to_head_laptime(driverIDs, season, round_number, startLap = 0, endLap =
 			
 		x = np.arange(1+startLap, len(driverLaps)+startLap+1)
 
+		color = get_color(driver)
 
-		#If the driver doesn't have a color assigned to them already, use a randomly generated one.
-		if driver not in driverColors.keys(): 
-			color = colors.hsv_to_rgb((np.random.randint(0, 256)/256, 1, 1))
-		else:
-			color = driverColors[driver]
 
 		lapTimeData.append(driverLaps)
 		
@@ -63,22 +59,12 @@ def head_to_head_laptime(driverIDs, season, round_number, startLap = 0, endLap =
 		minIndex = min([driverLaps.shape[0], deltaTimes.shape[0]])
 		delta.scatter(x[:minIndex], driverLaps[:minIndex]-deltaTimes[:minIndex], color=color)
 
-	xbound = laptimes.get_xbound()
-	ybound = laptimes.get_ybound()
-
-	xticks = np.arange(int(xbound[0]), int(xbound[1]))
-	yticks = np.arange(int(ybound[0])-1, int(ybound[1])+1, 0.2)
-
 	laptimes.set_xlabel("Lap number")
 	laptimes.set_ylabel("Lap times [s]")
 	laptimes.legend()
-	#laptimes.set_xticks(xticks)
-	#laptimes.set_yticks(yticks)
+
 	laptimes.set_title("{}".format(raceName))
 	laptimes.grid(linestyle="--", linewidth=0.5)
-
-	xbound = delta.get_xbound()
-	ybound = delta.get_ybound()
 
 	delta.set_xlabel("Lap number")
 	delta.set_ylabel("Lap times [s]")
@@ -97,6 +83,51 @@ def rolling_laptimes_chart(driverIDList, season, round_number, startLap = None, 
 	roll = rolling_laptimes(driverID, season, round_number, startLap = startLap, endLap = endLap, laps=laps)
 	plt.scatter(x, roll, color=driverColors[driverID])
 	plt.plot(x, roll, color=driverColors[driverID])
+
+
+def driver_lap_boxplot(driverIDList, season, round_number, startLap=None, endLap=None, exclude=-1, scatter=True):
+	"""
+	Creates a boxplot of laptimes for drivers provided at a race.
+	If exclude is given a positive value, excludes any values that are greater than that threshold(given as a percentage)
+	"""
+	fig, ax = plt.subplots(1,1)
+	raceName = get_race_name(season, round_number)
+	lapTimeData = []
+	position = 1
+
+	for driver in driverIDList:
+
+		driverLaps = APIRequests.get_laps(season, round_number, driver)[startLap:endLap]
+		if driverLaps is None:
+			print("Driver {} has no laps. Check driverID or if the driver started the Grand Prix.".format(driver))
+			continue	
+
+		if exclude>0:
+			driverLaps = driverLaps[driverLaps<np.average(driverLaps)*exclude]
+
+		lapTimeData.append(driverLaps)
+		
+		if scatter:
+			color = get_color(driver)
+			x = np.random.normal(position, 0.04, size=len(driverLaps))
+			ax.scatter(x, driverLaps, color=color, alpha=0.3, label=driver)
+
+		position+=1
+	
+	ax.boxplot(x=lapTimeData, labels=driverIDList)#, color=color)
+
+	ax.set_xlabel("Drivers")
+	ax.set_ylabel("Lap times[s]")
+	ax.legend(loc="upper right")
+	ax.grid(linestyle="--", linewidth=0.5)
+	ax.set_title("{}".format(raceName))
+
+	return fig, ax, lapTimeData
+
+
+	
+
+
 
 
 

@@ -2,9 +2,10 @@ import json
 import requests as req
 import requests_cache as cache
 import numpy as np
+from matplotlib import colors 
 
 from . import APIRequests
-from . import constants
+from .constants import *
 
 
 
@@ -63,3 +64,11 @@ def get_lap_stats(driverID, season, round_number, n, percent = 1, startLap = Non
 	return timed_laps, sorted_laps, lap_average
 
 
+def get_color(driverID):
+	#If the driver doesn't have a color assigned to them already, use a randomly generated one.
+		if driverID not in driverColors.keys(): 
+			color = colors.hsv_to_rgb((np.random.randint(0, 256)/256, 1, 1))
+		else:
+			color = driverColors[driverID]
+
+		return color

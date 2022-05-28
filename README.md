@@ -19,5 +19,10 @@ For example, to get laptimes for a certain race for a driver, you would use get_
 
 ## driverCompare.py & driverPlots.py
 
-There are a few functions already made to compare driver laptimes. 
+There are a few functions already made to compare driver laptimes. For usage information, just check their help() response.
+
+1. driverPlots.py
+	*head_to_head_laptime(driverIDList, season, round_number, startLap = 0, endLap = None, laps = 0, cutoff=None)
+	*rolling_laptimes_chart(driverIDList, season, round_number, startLap = None, endLap = None, laps=3)
+	*driver_lap_boxplot(driverIDList, season, round_number, startLap=None, endLap=None, exclude=-1, scatter=True)
 
