@@ -15,7 +15,7 @@ Libraries that need to be installed: matplotlib, numpy, requests_cache. They can
 ## APIRequests.py
 
 This has a few functions to get data directly from the Motorrace database.
-For example, to get laptimes for a certain race for a driver, you would use get_laps(season, round_number, driverID). Driver IDs can be found with get_id(name) where a search is performed. This would return an array of laptimes on success, or an empty array on failure(incorrect parameters or simply no laptimes available)
+For example, to get laptimes for a certain race for a driver, you would use get_laps(season, round_number, driverID). This would return an array of laptimes on success, or an empty array on failure(incorrect parameters or simply no laptimes available). Driver IDs can be found with get_id(name) where a regex search is performed. It returns a dictionary with full name : driverID. 
 
 ## driverCompare.py & driverPlots.py
 
