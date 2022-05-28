@@ -44,16 +44,21 @@ def driver_quali_comparison(driverIDList, season, round_number):
 	driverQualiData = []
 	driverGaps = []
 
-	driver1Stats = APIRequests.get_quali(driverIDList[0], round_number, driverID)
+	driver1Stats = APIRequests.get_quali(season, round_number, driverIDList[0])
 	driverQualiData.append(driver1Stats)
 
 	driverGaps.append((driverIDList[0], 0))
 
 	for driverID in driverIDList[1:]:
-		driverStats = APIRequests.get_quali(driverIDList[0], round_number, driverID)
+		driverStats = APIRequests.get_quali(season, round_number, driverID)
 		driverQualiData.append(driverStats)
+		print(driverStats)
 
-		gapTo = driverStats - driver1Stats
+		gapTo = []
+		for i,time in enumerate(driverStats):
+			if i<len(driver1Stats):
+				gapTo.append(time-driver1Stats[i])
+				
 		driverGaps.append((driverID, gapTo))
 
 	return driverQualiData, driverGaps

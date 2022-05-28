@@ -68,9 +68,8 @@ def get_color(driverID):
 	"""
 	If the driver doesn't have a color assigned to them already, use a randomly generated one.
 	"""
-		if driverID not in driverColors.keys(): 
-			color = colors.hsv_to_rgb((np.random.randint(0, 256)/256, 1, 1))
-		else:
-			color = driverColors[driverID]
-
-		return color
+	if driverID not in driverColors.keys(): 
+		color = colors.hsv_to_rgb((np.random.randint(0, 256)/256, 1, 1))
+	else:
+		color = driverColors[driverID]
+	return color

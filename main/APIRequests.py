@@ -72,6 +72,10 @@ def get_quali(season, round_number, driverID):
 	Results returned in order of Q1, Q2, Q3.
 	"""
 
+	if type(season) != int or type(round_number) != int:
+		print("Season and round number must be integers.")
+		return np.array([])
+
 	qualiRequest = req.get("https://ergast.com/api/f1/{0}/{1}/drivers/{2}/qualifying.json".format(season, round_number, driverID))
 	if qualiRequest.status_code >= 400:
 		return np.array([])
