@@ -23,6 +23,12 @@ There are a few functions already made to compare driver laptimes. For usage inf
 
 1. driverPlots.py
    * head_to_head_laptime(driverIDList, season, round_number, startLap = 0, endLap = None, laps = 0, cutoff=None)
-   * rolling_laptimes_chart(driverIDList, season, round_number, startLap = None, endLap = None, laps=3)
    * driver_lap_boxplot(driverIDList, season, round_number, startLap=None, endLap=None, exclude=-1, scatter=True)
 
+2. driverCompare.py
+   * driver_lap_comparaison(driverIDList, season, round_number, n, percent = 1, startLap = None, endLap = None)
+   * driver_lap_comparaison(driverIDList, season, round_number)
+
+## methods.py
+
+This contains functions required for the other modules to work. Most useful one that could be used independently is get_lap_stats which returns the laps and lap average of a driver at a certain Grand Prix. 

@@ -24,8 +24,10 @@ def get_laps(season, round_number, driverID):
 	return lapTimes
 
 def get_races(seasonList):
-	#Takes as input a list of seasons(years) and gets all the races(# of rounds essentially)
-	#returns a tuple (seaason, round)
+	"""
+	Takes as input a list of seasons(years) and gets all the races(# of rounds essentially)
+	Returns a tuple (seaason, round)
+	"""
 	seasonRounds = []
 
 	for season in seasonList:

@@ -76,15 +76,6 @@ def head_to_head_laptime(driverIDList, season, round_number, startLap = 0, endLa
 	return fig, laptimes, delta, lapTimeData
 
 
-
-def rolling_laptimes_chart(driverIDList, season, round_number, startLap = None, endLap = None, laps=3):
-	x = np.arange(1+startLap, (endLap)-laps+2)
-	
-	roll = rolling_laptimes(driverID, season, round_number, startLap = startLap, endLap = endLap, laps=laps)
-	plt.scatter(x, roll, color=driverColors[driverID])
-	plt.plot(x, roll, color=driverColors[driverID])
-
-
 def driver_lap_boxplot(driverIDList, season, round_number, startLap=None, endLap=None, exclude=-1, scatter=True):
 	"""
 	Creates a boxplot of laptimes for drivers provided at a race.

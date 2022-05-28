@@ -35,6 +35,7 @@ def driver_lap_comparaison(driverIDList, season, round_number, n, percent = 1, s
 
 	return driverLapData, driverGaps
 
+def driver_lap_comparaison(driverIDList, season, round_number):
 
 
 

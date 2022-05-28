@@ -29,7 +29,7 @@ def getPtsSystem(season, drivers, ptsSystem):
 		for race in driver.raceResults[season].keys():
 			driverPts[driver].append(ptsSystem[driver.raceResults[season][race]])
 			pts += ptsSystem[driver.raceResults[season][race]]
-	print(driver.driverID, season, pts)
+	#print(driver.driverID, season, pts)
 	return driverPts
 
 def rolling_average(lapTimes, n=3):
@@ -65,7 +65,9 @@ def get_lap_stats(driverID, season, round_number, n, percent = 1, startLap = Non
 
 
 def get_color(driverID):
-	#If the driver doesn't have a color assigned to them already, use a randomly generated one.
+	"""
+	If the driver doesn't have a color assigned to them already, use a randomly generated one.
+	"""
 		if driverID not in driverColors.keys(): 
 			color = colors.hsv_to_rgb((np.random.randint(0, 256)/256, 1, 1))
 		else:
