@@ -29,7 +29,7 @@ def driver_lap_comparison(driverIDList, season, round_number, n, percent = 1, st
 
 	for driverID in driverIDList[1:]:
 		driverStats = get_lap_stats(driverID, season, round_number, n, percent, startLap = startLap, endLap = endLap)
-		driverLapData.append(driver1Stats)
+		driverLapData.append(driverStats)
 		driverGaps.append((driverID, driverStats[2]-laptime))
 
 
